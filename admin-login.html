@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - SmartPark India</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-login.css">
+    <style>
+        /* Essential styles in case CSS isn't loading or for logic-specific UI */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+        .loading-spinner {
+            width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite;
+            margin: 0 auto; display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .error-message { 
+            color: #ff6b6b; font-size: 0.85rem; margin-bottom: 15px; 
+            display: none; background: rgba(255,107,107,0.1); 
+            padding: 10px; border-radius: 8px; border: 1px solid rgba(255,107,107,0.2);
+        }
+        .success-message { display: none; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="login-content">
+            <div class="admin-logo">
+                <div class="admin-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h1 class="admin-title">Admin Panel</h1>
+                <p class="admin-subtitle">SmartPark Management System</p>
+            </div>
+
+            <form id="adminLoginForm" class="login-form">
+                <div class="form-group">
+                    <input type="email" id="adminEmail" class="form-input" 
+                           autocomplete="email" placeholder="admin@smartpark.com" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="adminPassword" class="form-input" 
+                           autocomplete="current-password" placeholder="Enter password" required>
+                </div>
+                
+                <div class="remember-row">
+                    <input type="checkbox" id="rememberMe" checked>
+                    <label for="rememberMe">Remember Email</label>
+                </div>
+
+                <div id="errorMessage" class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errText">Invalid credentials.</span>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span id="btnText">Login to Dashboard</span>
+                    <div id="loadingSpinner" class="loading-spinner"></div>
+                </button>
+            </form>
+
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle" style="font-size: 2.5rem; color: #22c55e;"></i>
+                <div style="margin-top: 15px; font-weight: 600; font-size: 1.2rem;">Login Successful!</div>
+                <div style="color: #8b949e; margin-top: 5px;">Redirecting to dashboard...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // 1. FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyDigmGHwWyihxCZJP7KU5CijptuqwAtZqs",
+            authDomain: "smartpark-india-54312.firebaseapp.com",
+            projectId: "smartpark-india-54312",
+            storageBucket: "smartpark-india-54312.firebasestorage.app",
+            messagingSenderId: "58298050108",
+            appId: "1:58298050108:web:2775b30f48c8ce7dad0539",
+            measurementId: "G-PPH03PQE1D"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // 2. ADMIN CHEAT SHEET (Your reference)
+        const ADMIN_CREDENTIALS = {
+            "mumbaiadmin@gmail.com": { password: "mumbai123", role: "mumbai", name: "Mumbai Admin" },
+            "delhiadmin@gmail.com": { password: "delhi123", role: "delhi", name: "Delhi Admin" },
+            "bangaloreadmin@gmail.com": { password: "bangalore123", role: "bangalore", name: "Bangalore Admin" },
+            "puneadmin@gmail.com": { password: "pune123", role: "pune", name: "Pune Admin" }
+        };
+
+        // 3. AUTO-FILL LAST EMAIL
+        window.addEventListener('load', () => {
+            const savedEmail = localStorage.getItem('adminLastEmail') || '';
+            const emailInput = document.getElementById('adminEmail');
+            if(savedEmail) {
+                emailInput.value = savedEmail;
+                document.getElementById('adminPassword').focus();
+            } else {
+                emailInput.focus();
+            }
+        });
+
+        // 4. LOGIN HANDLER
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('adminEmail').value.trim().toLowerCase();
+            const password = document.getElementById('adminPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            const btn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('loadingSpinner');
+            const errorMsg = document.getElementById('errorMessage');
+            const errText = document.getElementById('errText');
+            const successMsg = document.getElementById('successMessage');
+
+            // Reset UI
+            errorMsg.style.display = 'none';
+
+            // Step A: Check local list first
+            const adminData = ADMIN_CREDENTIALS[email];
+            if (!adminData) {
+                showError("Access Denied: Email not in Admin registry.");
+                return;
+            }
+
+            if (password !== adminData.password) {
+                showError("Incorrect Password. Check your cheat-sheet!");
+                triggerShake();
+                return;
+            }
+
+            // Step B: Firebase Authentication
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+
+            try {
+                // Log in to Firebase
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                
+                // Save session for Dashboard
+                localStorage.setItem('adminSession', JSON.stringify({
+                    email: email,
+                    role: adminData.role,
+                    adminName: adminData.name,
+                    uid: userCredential.user.uid,
+                    loginTime: Date.now()
+                }));
+
+                if (rememberMe) localStorage.setItem('adminLastEmail', email);
+
+                // Show Success & Redirect
+                document.getElementById('adminLoginForm').style.display = 'none';
+                successMsg.style.display = 'block';
+                
+                setTimeout(() => {
+                    window.location.href = 'admin-dashboard.html';
+                }, 1500);
+
+            } catch (error) {
+                btn.disabled = false;
+                btnText.style.display = 'inline';
+                spinner.style.display = 'none';
+                
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    showError("Firebase Auth failed. Ensure user exists in Firebase Console.");
+                } else {
+                    showError("Connection Error: " + error.message);
+                }
+                triggerShake();
+            }
+        });
+
+        function showError(msg) {
+            document.getElementById('errText').innerText = msg;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+
+        function triggerShake() {
+            const pwField = document.getElementById('adminPassword');
+            pwField.style.animation = 'shake 0.4s ease-in-out';
+            setTimeout(() => pwField.style.animation = '', 400);
+        }
+    </script>
+</body>
+</html>

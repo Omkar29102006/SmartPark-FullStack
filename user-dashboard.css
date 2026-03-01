@@ -1,0 +1,436 @@
+:root {
+    --bg: #0b1020;
+    --surface: #111827;
+    --surface-soft: #1f2937;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --primary: #38bdf8;
+    --primary-strong: #0ea5e9;
+    --primary-soft: #172554;
+    --accent: #60a5fa;
+    --success: #22c55e;
+    --danger: #f87171;
+    --border: #334155;
+    --shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    --radius: 14px;
+    --glass-bg: rgba(255,255,255,0.05);
+    --glass-border: rgba(88,166,255,0.2);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0b1020 0%, #0f172a 50%, #1e293b 100%);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.45;
+    position: relative;
+}
+
+/* ✨ Your beautiful background - untouched */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(56,189,248,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(34,197,94,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(139,92,246,0.08) 0%, transparent 50%);
+    z-index: -1;
+    animation: float 20s ease-in-out infinite;
+}
+
+/* Your perfect header */
+.dashboard-header {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 14px;
+    padding: 18px clamp(16px, 4vw, 40px);
+    background: var(--glass-bg); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.header-left {
+    display: flex; align-items: center; gap: 12px;
+    font-size: clamp(1.1rem, 4vw, 1.4rem); font-weight: 800;
+    letter-spacing: 0.3px; color: var(--text);
+}
+
+.header-left i {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #0b1020; background: linear-gradient(135deg, var(--primary), var(--accent));
+    box-shadow: 0 8px 25px rgba(56,189,248,0.4);
+    transition: all 0.3s ease;
+}
+
+.header-left i:hover {
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 12px 35px rgba(56,189,248,0.6);
+}
+
+.header-right { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+.user-info {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 12px; border-radius: 999px;
+    border: 1px solid var(--glass-border); background: var(--glass-bg);
+    backdrop-filter: blur(15px); color: var(--text);
+    font-size: 0.92rem; font-weight: 600;
+}
+
+.user-info i { color: var(--accent); font-size: 1.2rem; }
+
+.bookings-btn, .completed-btn {
+    border: 1px solid var(--glass-border); background: var(--glass-bg);
+    backdrop-filter: blur(15px); color: var(--text);
+    padding: 9px 14px; border-radius: 11px; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.3s ease;
+    display: inline-flex; align-items: center; gap: 7px;
+}
+
+.bookings-btn:hover, .completed-btn:hover {
+    transform: translateY(-2px); border-color: var(--primary);
+    box-shadow: 0 10px 30px rgba(56,189,248,0.3);
+}
+
+/* Your perfect search */
+.search-section {
+    margin: clamp(24px, 7vw, 46px) auto;
+    max-width: 920px; padding: 0 clamp(14px, 4vw, 20px);
+    text-align: center;
+}
+
+.search-section h2 {
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    margin-bottom: 20px; color: var(--text);
+    line-height: 1.2; text-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+.network-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 12px; border-radius: 999px;
+    border: 1px solid var(--glass-border); background: var(--glass-bg);
+    backdrop-filter: blur(15px); color: #cbe4ff;
+    font-size: 0.84rem; margin-bottom: 14px;
+}
+
+.search-input-group {
+    display: flex; max-width: 640px; margin: 0 auto;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--glass-border); background: var(--glass-bg);
+    backdrop-filter: blur(20px); box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.search-input-group input {
+    flex: 1; border: none; background: transparent; color: var(--text);
+    padding: 15px 18px; font-size: 1rem; outline: none;
+}
+
+.search-input-group input::placeholder { color: #94a3b8; }
+
+.search-btn {
+    border: none; cursor: pointer; padding: 0 18px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+    color: #fff; font-weight: 600; transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(56,189,248,0.4);
+}
+
+.search-btn:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 8px 25px rgba(56,189,248,0.6);
+}
+
+.nearby-actions {
+    display: flex; justify-content: center; gap: 10px;
+    margin-top: 14px; flex-wrap: wrap;
+}
+
+.nearby-btn {
+    border: 1px solid var(--glass-border); background: var(--glass-bg);
+    backdrop-filter: blur(15px); color: var(--primary-strong);
+    padding: 9px 14px; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.3s ease;
+}
+
+.nearby-btn:hover {
+    background: var(--primary-soft); border-color: var(--primary);
+    transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56,189,248,0.3);
+}
+
+/* Your perfect city cards - untouched */
+.cities-section { 
+    padding: 12px clamp(20px, 5vw, 40px) 32px;
+    background: linear-gradient(180deg, transparent 0%, var(--glass-bg) 100%);
+}
+
+.cities-grid {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 28px;
+}
+
+.city-card-dashboard {
+    display: flex; flex-direction: column;
+    min-height: 500px; padding: 32px 28px;
+    background: var(--glass-bg); backdrop-filter: blur(25px);
+    border-radius: 24px; border: 1px solid var(--glass-border);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer; position: relative; overflow: hidden;
+}
+
+.city-card-dashboard::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 6px; background: linear-gradient(90deg, var(--primary), var(--accent), var(--success));
+    border-radius: 24px 24px 0 0;
+}
+
+.city-card-dashboard:hover {
+    transform: translateY(-12px) scale(1.02);
+    border-color: rgba(56,189,248,0.5);
+    box-shadow: 0 40px 80px rgba(56,189,248,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.city-card-dashboard.nearest-card {
+    border-color: rgba(34,197,94,0.5) !important;
+    box-shadow: 0 0 60px rgba(34,197,94,0.4) !important;
+}
+
+.city-card-dashboard.nearest-card::before {
+    background: linear-gradient(90deg, var(--success), #4ade80, #86efac) !important;
+}
+
+.nearest-badge {
+    position: absolute; top: 24px; right: 24px;
+    padding: 10px 16px; border-radius: 30px;
+    background: linear-gradient(135deg, var(--success), #4ade80);
+    border: 1px solid rgba(134,239,172,0.5);
+    color: white; font-size: 0.85rem; font-weight: 800;
+    backdrop-filter: blur(25px); box-shadow: 0 8px 32px rgba(34,197,94,0.4);
+}
+
+.city-icon-circle {
+    width: 100px; height: 100px; margin: 0 auto 24px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.city-icon-circle::after {
+    content: ''; position: absolute; inset: 4px;
+    border-radius: 50%; background: rgba(255,255,255,0.1);
+    animation: shimmer 3s infinite;
+}
+
+.city-icon-circle i {
+    font-size: 3.2rem; z-index: 2;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+}
+
+/* Your beautiful city themes */
+.mumbai .city-icon-circle {
+    background: linear-gradient(135deg, #f59e0bcc, #fbbf2488);
+    border: 4px solid rgba(245,158,11,0.6);
+    box-shadow: 0 0 30px rgba(245,158,11,0.5);
+}
+.delhi .city-icon-circle {
+    background: linear-gradient(135deg, #ef4444cc, #f8717188);
+    border: 4px solid rgba(239,68,68,0.6);
+    animation: pulse-glow 2s infinite;
+}
+.bangalore .city-icon-circle {
+    background: linear-gradient(135deg, #8b5cf6cc, #a78bfa88);
+    border: 4px solid rgba(139,92,246,0.6);
+}
+.pune .city-icon-circle {
+    background: linear-gradient(135deg, #06b6d4cc, #0891b288);
+    border: 4px solid rgba(6,182,212,0.6);
+}
+
+.city-card-dashboard:hover .city-icon-circle {
+    transform: scale(1.15) rotate(360deg);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+}
+
+.nearest-card .city-icon-circle {
+    border-color: rgba(34,197,94,0.8) !important;
+    box-shadow: 0 0 40px rgba(34,197,94,0.6) !important;
+}
+
+.city-name-lg {
+    font-size: clamp(1.5rem, 5.5vw, 1.85rem) !important;
+    font-weight: 800 !important;
+    background: linear-gradient(135deg, #ffffff, #e5e7eb, #f8fafc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-align: center; margin-bottom: 16px;
+    letter-spacing: -0.03em;
+    text-shadow: 0 4px 16px rgba(0,0,0,0.7);
+}
+
+.availability {
+    margin-top: auto; padding-top: 24px; text-align: center;
+}
+
+.free-spots {
+    font-size: clamp(3rem, 9vw, 3.8rem) !important;
+    font-weight: 900 !important;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(56,189,248,0.8);
+    display: block; line-height: 1;
+}
+
+.total-spots {
+    font-size: 1.05rem; color: var(--muted); font-weight: 600; margin-top: 6px;
+}
+
+.book-btn, .navigate-btn {
+    width: 100%; margin-top: 24px; padding: 18px 24px;
+    border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);
+    color: #fff; cursor: pointer; font-size: 1.1rem; font-weight: 800;
+    transition: all 0.4s ease; backdrop-filter: blur(10px);
+}
+
+.book-btn { 
+    background: linear-gradient(135deg, var(--success), #16a34a, var(--success));
+    box-shadow: 0 10px 30px rgba(34,197,94,0.3);
+}
+.navigate-btn { 
+    background: linear-gradient(135deg, var(--accent), var(--primary));
+    box-shadow: 0 10px 30px rgba(96,165,250,0.3);
+}
+
+.book-btn:hover:not(:disabled), .navigate-btn:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(34,197,94,0.5);
+}
+
+/* Your perfect bookings */
+.bookings-section {
+    max-width: 1200px; margin: 0 auto 48px;
+    padding: 18px clamp(16px, 4vw, 36px);
+}
+
+.bookings-header {
+    display: flex; justify-content: center; align-items: center;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 22px;
+}
+
+#bookingsTitle {
+    color: var(--text) !important; background: none !important;
+    -webkit-text-fill-color: initial !important;
+    font-size: clamp(1.55rem, 5vw, 2.1rem) !important;
+}
+
+.bookings-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+}
+
+.booking-card {
+    position: relative; background: var(--glass-bg);
+    backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+    border-radius: var(--radius); padding: 22px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+}
+
+.booking-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+}
+
+.booking-card.completed {
+    background: rgba(31,41,55,0.8) !important;
+    border-color: #475569 !important;
+}
+
+.status-circle {
+    position: absolute; top: 16px; right: 16px;
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 700; color: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.status-active { background: linear-gradient(135deg, var(--success), #16a34a) !important; }
+.status-completed { background: linear-gradient(135deg, var(--accent), var(--primary)) !important; }
+.status-reserved { background: linear-gradient(135deg, #ea580c, #f97316) !important; }
+.status-confirmed { background: linear-gradient(135deg, #d97706, #f59e0b) !important; }
+
+.booking-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px; padding-right: 52px;
+    font-size: 1.06rem; font-weight: 700; color: var(--accent);
+}
+
+.detail-item {
+    display: flex; justify-content: space-between; gap: 8px;
+    padding: 8px 0; border-bottom: 1px dashed rgba(51,65,85,0.5);
+}
+
+.detail-item:last-of-type { border-bottom: none; }
+
+.detail-label { color: var(--muted); font-size: 0.88rem; }
+.detail-value { color: var(--text); font-weight: 700; }
+.timer, .countdown { color: #f59e0b !important; font-weight: 800; }
+
+.end-early-btn {
+    width: 100%; margin-top: 14px; border: none;
+    border-radius: 11px; padding: 12px; cursor: pointer;
+    font-weight: 600; color: #fff;
+    background: linear-gradient(135deg, var(--danger), #dc2626);
+    transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(248,113,113,0.4);
+}
+
+.end-early-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(248,113,113,0.6);
+}
+
+.end-early-btn:disabled {
+    background: #94a3b8 !important; cursor: not-allowed !important;
+    box-shadow: none !important;
+}
+
+.last-updated {
+    color: var(--muted); font-size: 0.82rem;
+}
+
+/* Your beautiful animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes shimmer {
+    0% { transform: scale(0.8) rotate(-10deg); opacity: 0.5; }
+    50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+    100% { transform: scale(0.8) rotate(-10deg); opacity: 0.5; }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.6); }
+    50% { box-shadow: 0 0 40px rgba(239,68,68,0.9), 0 0 60px rgba(239,68,68,0.5); }
+}
+
+:focus-visible {
+    outline: 3px solid #7dd3fc; outline-offset: 2px; border-radius: 8px;
+}
+
+/* Your perfect responsive */
+@media (max-width: 768px) {
+    .cities-grid, .bookings-grid { grid-template-columns: 1fr; }
+    .city-card-dashboard { min-height: 460px; padding: 24px 20px; }
+    .city-icon-circle { width: 85px; height: 85px; }
+    .city-icon-circle i { font-size: 2.8rem; }
+    .nearby-actions { flex-direction: column; }
+    .search-input-group { flex-direction: column; }
+    .bookings-btn, .completed-btn { flex: 1; justify-content: center; }
+    .dashboard-header { align-items: stretch; }
+}

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - SmartPark India</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%);
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            color: #f0f6fc;
+            padding: 20px;
+        }
+        
+        .signup-container { 
+            background: rgba(255,255,255,0.06); 
+            backdrop-filter: blur(25px); 
+            border-radius: 28px; 
+            padding: 40px 30px; 
+            border: 1px solid rgba(46,164,255,0.2);
+            max-width: 450px; 
+            width: 100%; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+        
+        .signup-header h2 { 
+            font-size: 2.2rem; 
+            margin-bottom: 8px; 
+            text-align: center; 
+            background: linear-gradient(135deg, #58a6ff, #79c0ff);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .signup-header p { text-align: center; color: #8b949e; margin-bottom: 30px; font-size: 0.95rem; }
+        
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #c9d1d9; }
+        
+        .form-group input { 
+            width: 100%; 
+            padding: 14px 18px; 
+            border: 2px solid rgba(46,164,255,0.2); 
+            border-radius: 14px; 
+            background: rgba(255,255,255,0.08); 
+            color: #f0f6fc;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus { outline: none; border-color: #58a6ff; background: rgba(255,255,255,0.12); box-shadow: 0 0 10px rgba(88,166,255,0.2); }
+        
+        .password-group i { position: absolute; right: 18px; top: 45px; cursor: pointer; color: #8b949e; }
+
+        .signup-btn { 
+            width: 100%; 
+            padding: 16px; 
+            margin-top: 10px;
+            background: linear-gradient(135deg, #58a6ff, #79c0ff); 
+            color: #0d1117; 
+            border: none; 
+            border-radius: 14px; 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .signup-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .signup-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
+
+        .error-msg { color: #f87171; font-size: 0.8rem; margin-top: 5px; font-weight: 500; }
+
+        .login-link { text-align: center; display: block; margin-top: 25px; color: #8b949e; text-decoration: none; font-size: 0.9rem; }
+        .login-link:hover { color: #58a6ff; text-decoration: underline; }
+
+        /* Loader Animation */
+        .spinner { width: 20px; height: 20px; border: 3px solid #0d1117; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="signup-container">
+        <div class="signup-header">
+            <h2>SmartPark India</h2>
+            <p>Create your account for smart parking</p>
+        </div>
+        
+        <form id="signupForm">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Full Name</label>
+                <input type="text" id="nameInput" placeholder="John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="emailInput" placeholder="john@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Mobile Number</label>
+                <input type="tel" id="phoneInput" placeholder="9876543210" maxlength="10" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-key"></i> 4-Digit Security PIN</label>
+                <input type="password" id="pinInput" placeholder="Ex: 1234" maxlength="4" required>
+                <p style="font-size: 0.75rem; color: #8b949e; margin-top: 4px;">Used for quick exit/payment verification</p>
+            </div>
+
+            <div class="form-group password-group">
+                <label><i class="fas fa-lock"></i> Account Password</label>
+                <input type="password" id="passwordInput" placeholder="Minimum 6 characters" required>
+                <i class="fas fa-eye" id="togglePass"></i>
+            </div>
+            
+            <button type="submit" class="signup-btn" id="signupBtn">
+                <span id="btnText">Create Account</span>
+                <div class="spinner" id="btnSpinner"></div>
+            </button>
+        </form>
+
+        <a href="user-login.html" class="login-link">Already a member? Sign In</a>
+    </div>
+
+    <script>
+        // --- 1. FIREBASE INITIALIZATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDigmGHwWyihxCZJP7KU5CijptuqwAtZqs",
+            authDomain: "smartpark-india-54312.firebaseapp.com",
+            projectId: "smartpark-india-54312",
+            storageBucket: "smartpark-india-54312.firebasestorage.app",
+            messagingSenderId: "58298050108",
+            appId: "1:58298050108:web:2775b30f48c8ce7dad0539",
+            measurementId: "G-PPH03PQE1D"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // --- 2. UI FUNCTIONALITY ---
+        // Toggle Password Visibility
+        document.getElementById('togglePass').addEventListener('click', function() {
+            const passField = document.getElementById('passwordInput');
+            const type = passField.type === 'password' ? 'text' : 'password';
+            passField.type = type;
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Restrict PIN to Numbers Only
+        document.getElementById('pinInput').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        // --- 3. THE SIGNUP LOGIC ---
+        const signupForm = document.getElementById('signupForm');
+        const signupBtn = document.getElementById('signupBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Get Values
+            const name = document.getElementById('nameInput').value;
+            const email = document.getElementById('emailInput').value;
+            const phone = document.getElementById('phoneInput').value;
+            const pin = document.getElementById('pinInput').value;
+            const password = document.getElementById('passwordInput').value;
+
+            // Basic Validation
+            if(pin.length !== 4) {
+                alert("Please enter a 4-digit PIN.");
+                return;
+            }
+
+            // Start Loading State
+            signupBtn.disabled = true;
+            btnText.textContent = "Processing...";
+            btnSpinner.style.display = "block";
+
+            try {
+                // Step A: Create User in Firebase Auth
+                const result = await auth.createUserWithEmailAndPassword(email, password);
+                const user = result.user;
+
+                // Step B: Save User Details in Firestore
+                // We use the same 'uid' from Auth to name the document in Firestore
+                await db.collection("users").doc(user.uid).set({
+                    fullName: name,
+                    email: email,
+                    phoneNumber: "+91" + phone,
+                    securityPin: pin,
+                    walletBalance: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Step C: Success UI
+                btnText.textContent = "Account Created!";
+                btnSpinner.style.display = "none";
+
+                setTimeout(() => {
+                    window.location.href = "user-dashboard.html";
+                }, 1500);
+
+            } catch (error) {
+                // Handle Errors
+                console.error(error);
+                alert("Error: " + error.message);
+                signupBtn.disabled = false;
+                btnText.textContent = "Create Account";
+                btnSpinner.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>

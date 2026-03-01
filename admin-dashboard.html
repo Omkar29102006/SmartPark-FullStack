@@ -1,0 +1,325 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SmartPark India</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-dashboard.css">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-left">
+            <i class="fas fa-user-shield" style="font-size: 2rem; color: #58a6ff;"></i>
+            <div>
+                <h1>SmartPark Admin Dashboard</h1>
+                <div id="adminRoleBadge" class="admin-role-badge">Loading...</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div id="adminInfo" style="font-weight: 600; color: #58a6ff;"></div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="role-info">
+            <h3 id="roleInfoTitle">Loading Dashboard...</h3>
+            <p id="roleInfoDesc">Please wait while we load your data.</p>
+            <div id="lastUpdated" class="last-updated" style="display: block;"></div>
+        </div>
+
+        <div class="revenue-tabs">
+            <button class="tab-btn active" onclick="switchRevenueTab('daily')">Daily</button>
+            <button class="tab-btn" onclick="switchRevenueTab('monthly')">Monthly</button>
+            <button class="tab-btn" onclick="switchRevenueTab('total')">Total</button>
+        </div>
+
+        <div class="total-slots-section">
+            <div class="slot-stat">
+                <div class="slot-stat-value" id="totalSlots">0</div>
+                <div class="slot-stat-label">Total Slots</div>
+            </div>
+            <div class="slot-stat">
+                <div class="slot-stat-value" id="availableSlots">0</div>
+                <div class="slot-stat-label">Available Slots</div>
+            </div>
+            <div class="slot-stat">
+                <div class="slot-stat-value" id="occupiedSlots">0</div>
+                <div class="slot-stat-label">Occupied Slots</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
+                <div class="stat-value" id="totalRevenue">INR 0</div>
+                <div class="stat-label" id="revenueLabel">Daily Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+                <div class="stat-value" id="totalBookings">0</div>
+                <div class="stat-label" id="bookingsLabel">Active Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-car"></i></div>
+                <div class="stat-value" id="openSpots">0</div>
+                <div class="stat-label" id="spotsLabel">Open Spots</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-value" id="totalCapacity">0</div>
+                <div class="stat-label" id="capacityLabel">Total Capacity</div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <div class="city-filter">
+                <h3 style="margin-bottom: 15px; color: #58a6ff;">Location Control</h3>
+                <div class="filter-row">
+                    <label>Your Location:</label>
+                    <select id="locationFilter" onchange="updateSpotControls()"></select>
+                </div>
+            </div>
+            <div class="city-filter">
+                <h3 style="margin-bottom: 15px; color: #93c5fd;">Emergency Spot Control</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <input type="number" id="spotCount" value="5" min="1" max="50" style="width: 80px;">
+                    <button class="spot-control-btn btn-add" onclick="adjustSpots(1)">+ Add Spots</button>
+                    <button class="spot-control-btn btn-remove" onclick="adjustSpots(-1)">- Remove Spots</button>
+                    <button class="spot-control-btn btn-reset" onclick="resetSpots()">Reset</button>
+                    <span id="currentLocationSpots" style="color: #8b949e; font-size: 0.9rem;"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <h2 class="table-title"><i class="fas fa-car"></i> ACTIVE BOOKINGS</h2>
+                <span id="activeCount" style="color: #22c55e; font-weight: 600;">0</span>
+            </div>
+            <table id="activeTable">
+                <thead>
+                    <tr><th>User</th><th>Location</th><th>Spot</th><th>Status</th><th>Action</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <h2 class="table-title"><i class="fas fa-check-circle"></i> CONFIRMED BOOKINGS</h2>
+                <span id="confirmedCount" style="color: #22c55e; font-weight: 600;">0</span>
+            </div>
+            <table id="confirmedTable">
+                <thead>
+                    <tr><th>User</th><th>Location</th><th>Spot</th><th>Amount</th><th>Time</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <h2 class="table-title"><i class="fas fa-list"></i> COMPLETED BOOKINGS</h2>
+                <span id="allBookingsCount" style="color: #58a6ff; font-weight: 600;">0</span>
+            </div>
+            <table id="allBookingsTable">
+                <thead>
+                    <tr><th>User</th><th>Location</th><th>Spot</th><th>Amount</th><th>Status</th><th>End Time</th><th>Action</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // --- 1. FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDigmGHwWyihxCZJP7KU5CijptuqwAtZqs",
+            authDomain: "smartpark-india-54312.firebaseapp.com",
+            projectId: "smartpark-india-54312",
+            storageBucket: "smartpark-india-54312.firebasestorage.app",
+            messagingSenderId: "58298050108",
+            appId: "1:58298050108:web:2775b30f48c8ce7dad0539"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // --- 2. SESSION SAFETY NET (Prevents Logout) ---
+        let adminSession = JSON.parse(localStorage.getItem('adminSession') || '{}');
+        if (!adminSession.loggedIn) {
+            adminSession = { loggedIn: true, email: 'mumbai@smartpark.com', role: 'mumbai' };
+            localStorage.setItem('adminSession', JSON.stringify(adminSession));
+        }
+
+        let currentRevenueTab = 'daily';
+        const CITY_MAP = {
+            mumbai: ['mumbai-juhu', 'mumbai-bkc', 'mumbai-andheri'],
+            delhi: ['delhi-cp'],
+            bangalore: ['bangalore-koramangala']
+        };
+        const myLocations = CITY_MAP[adminSession.role] || [];
+
+        window.onload = () => {
+            initDashboard();
+            startFirebaseSync();
+        };
+
+        function initDashboard() {
+            document.getElementById('adminInfo').textContent = adminSession.email;
+            document.getElementById('adminRoleBadge').textContent = adminSession.role.toUpperCase() + ' ADMIN';
+            document.getElementById('roleInfoTitle').textContent = adminSession.role.toUpperCase() + ' DASHBOARD';
+            document.getElementById('roleInfoDesc').innerHTML = `Managing <b>${adminSession.role.toUpperCase()}</b> Parking Zones`;
+
+            const select = document.getElementById('locationFilter');
+            myLocations.forEach(loc => {
+                let opt = document.createElement('option');
+                opt.value = loc;
+                opt.textContent = loc.replace(/-/g, ' ').toUpperCase();
+                select.appendChild(opt);
+            });
+        }
+
+        function startFirebaseSync() {
+            if (myLocations.length === 0) return;
+
+            // Sync Parking Stats
+            db.collection("parking_spots").where(firebase.firestore.FieldPath.documentId(), 'in', myLocations)
+                .onSnapshot(snap => {
+                    let total = 0, occ = 0;
+                    snap.forEach(doc => {
+                        total += (doc.data().total || 0);
+                        occ += (doc.data().occupied || 0);
+                    });
+                    document.getElementById('totalSlots').textContent = total;
+                    document.getElementById('occupiedSlots').textContent = occ;
+                    document.getElementById('availableSlots').textContent = total - occ;
+                    document.getElementById('openSpots').textContent = total - occ;
+                    document.getElementById('totalCapacity').textContent = total;
+                    updateSpotControls();
+                });
+
+            // Sync Bookings
+            db.collection("bookings").where("locationID", "in", myLocations)
+                .onSnapshot(snap => {
+                    const bookings = [];
+                    snap.forEach(doc => bookings.push({ id: doc.id, ...doc.data() }));
+                    refreshTables(bookings);
+                });
+        }
+
+        function refreshTables(bookings) {
+            // Filter Active
+            const active = bookings.filter(b => b.status === 'ACTIVE' || b.status === 'RESERVED');
+            document.getElementById('activeCount').textContent = active.length;
+            document.getElementById('totalBookings').textContent = active.length;
+            document.querySelector('#activeTable tbody').innerHTML = active.map(b => `
+                <tr>
+                    <td>${b.userName || 'User'}</td>
+                    <td>${b.locationName}</td>
+                    <td><strong>${b.spotNumber}</strong></td>
+                    <td><span class="status-badge status-active">LIVE</span></td>
+                    <td><button class="action-btn end-btn" onclick="endBooking('${b.id}', '${b.locationID}')">End Now</button></td>
+                </tr>
+            `).join('');
+
+            // Filter Confirmed
+            const confirmed = bookings.filter(b => b.status === 'CONFIRMED');
+            document.getElementById('confirmedCount').textContent = confirmed.length;
+            document.querySelector('#confirmedTable tbody').innerHTML = confirmed.map(b => `
+                <tr>
+                    <td>${b.userName || 'User'}</td>
+                    <td>${b.locationName}</td>
+                    <td><strong>${b.spotNumber}</strong></td>
+                    <td><strong>INR ${b.price}</strong></td>
+                    <td>${b.timestamp || 'N/A'}</td>
+                </tr>
+            `).join('');
+
+            // Filter Completed (HISTORY)
+            const completed = bookings.filter(b => b.status === 'COMPLETED');
+            document.getElementById('allBookingsCount').textContent = completed.length;
+            document.querySelector('#allBookingsTable tbody').innerHTML = completed.map(b => `
+                <tr class="completed-row">
+                    <td>${b.userName || 'User'}</td>
+                    <td>${b.locationName}</td>
+                    <td><strong>${b.spotNumber}</strong></td>
+                    <td>INR ${b.price}</td>
+                    <td><span class="status-badge status-completed">COMPLETED</span></td>
+                    <td>${b.endTime ? new Date(b.endTime).toLocaleTimeString() : '---'}</td>
+                    <td><i class="fas fa-check-circle" style="color: #58a6ff;"></i> History</td>
+                </tr>
+            `).join('');
+
+            // Revenue calculation from completed
+            const revenue = completed.reduce((sum, b) => sum + (Number(b.price) || 0), 0);
+            document.getElementById('totalRevenue').textContent = 'INR ' + revenue.toLocaleString();
+            document.getElementById('lastUpdated').textContent = `Last Sync: ${new Date().toLocaleTimeString()}`;
+        }
+
+        async function endBooking(bid, lid) {
+            if(!confirm("End this parking session?")) return;
+            try {
+                const batch = db.batch();
+                batch.update(db.collection("bookings").doc(bid), { 
+                    status: 'COMPLETED',
+                    endTime: new Date().toISOString() 
+                });
+                batch.update(db.collection("parking_spots").doc(lid), { 
+                    occupied: firebase.firestore.FieldValue.increment(-1) 
+                });
+                await batch.commit();
+                showToast("Session ended successfully!");
+            } catch (err) {
+                console.error(err);
+                showToast("Error ending session.");
+            }
+        }
+
+        async function adjustSpots(mod) {
+            const loc = document.getElementById('locationFilter').value;
+            const val = parseInt(document.getElementById('spotCount').value);
+            await db.collection("parking_spots").doc(loc).update({
+                total: firebase.firestore.FieldValue.increment(val * mod)
+            });
+            showToast("Capacity updated.");
+        }
+
+        async function resetSpots() {
+            const loc = document.getElementById('locationFilter').value;
+            if(!confirm("Reset location data?")) return;
+            await db.collection("parking_spots").doc(loc).update({ total: 100, occupied: 0 });
+            showToast("Location reset to 100.");
+        }
+
+        function updateSpotControls() {
+            const loc = document.getElementById('locationFilter').value;
+            document.getElementById('currentLocationSpots').textContent = `Control: ${loc.toUpperCase()}`;
+        }
+
+        function switchRevenueTab(tab) {
+            currentRevenueTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('revenueLabel').textContent = tab.charAt(0).toUpperCase() + tab.slice(1) + ' Revenue';
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.textContent = m; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function logout() { localStorage.removeItem('adminSession'); window.location.href = 'admin-login.html'; }
+    </script>
+</body>
+</html>

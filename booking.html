@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Booking - SmartPark India</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%);
+            min-height: 100vh; color: #f0f6fc; line-height: 1.4;
+        }
+        
+        .header {
+            padding: 15px 25px; 
+            background: rgba(13,17,23,0.95); backdrop-filter: blur(15px); 
+            border-bottom: 1px solid rgba(46,164,255,0.15);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-weight: 700; color: #58a6ff; display: flex; align-items: center; gap: 8px; }
+        
+        .back-btn { 
+            background: rgba(88,166,255,0.2); color: #58a6ff; border: 1px solid rgba(46,164,255,0.4);
+            padding: 10px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+        }
+
+        .main-content {
+            min-height: calc(100vh - 70px); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+        }
+        
+        .booking-card {
+            background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(20px);
+            border-radius: 20px; padding: 30px; width: 100%; max-width: 420px;
+            border: 1px solid rgba(88,166,255,0.2); box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+        
+        .title { font-size: 1.6rem; font-weight: 700; text-align: center; margin-bottom: 20px; color: #58a6ff; }
+        
+        .detail-row {
+            display: flex; justify-content: space-between; padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .detail-label { color: #8b949e; font-size: 0.9rem; }
+        .detail-value { font-weight: 600; color: #f0f6fc; }
+        #price-display { color: #3fb950; font-size: 1.2rem; }
+
+        .arrive-selector {
+            background: rgba(13, 17, 23, 0.6); border: 1px solid rgba(88,166,255,0.3);
+            border-radius: 12px; padding: 20px; margin: 20px 0; position: relative;
+        }
+        .selector-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .arrive-label { color: #58a6ff; font-weight: 600; font-size: 0.9rem; }
+        
+        .quick-base-btn {
+            background: #238636; color: white; border: none; padding: 4px 10px;
+            border-radius: 20px; font-size: 0.75rem; cursor: pointer; font-weight: 600;
+        }
+
+        #arriveTime {
+            width: 100%; padding: 12px; background: #0d1117; 
+            border: 1px solid #30363d; border-radius: 8px; color: #f0f6fc;
+            font-family: inherit; font-size: 1rem; outline: none; cursor: pointer;
+        }
+        #arriveTime:focus { border-color: #58a6ff; }
+
+        .confirm-btn {
+            width: 100%; padding: 16px; background: #238636;
+            border: none; border-radius: 12px; color: white; 
+            font-weight: 600; font-size: 1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .confirm-btn:hover { background: #2ea043; }
+        .confirm-btn:disabled { background: #30363d; cursor: not-allowed; }
+
+        .success-section {
+            display: none; text-align: center; padding: 20px;
+            background: rgba(63, 185, 80, 0.1); border: 1px solid #3fb950; border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <button class="back-btn" onclick="location.href='user-dashboard.html'">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <div class="logo"><i class="fas fa-parking"></i> SmartPark India</div>
+    </header>
+
+    <div class="main-content">
+        <div class="booking-card">
+            <h2 class="title">Confirm Reservation</h2>
+            
+            <div class="detail-row">
+                <span class="detail-label">Location</span>
+                <span class="detail-value" id="loc-display">--</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Total Amount</span>
+                <span class="detail-value" id="price-display">₹100</span>
+            </div>
+
+            <div class="arrive-selector">
+                <div class="selector-header">
+                    <label class="arrive-label">🕐 I will arrive in:</label>
+                    <button class="quick-base-btn" onclick="resetToBase()">Quick Reset (Base)</button>
+                </div>
+                <select id="arriveTime">
+                    <option value="0">Arriving Now (₹100)</option>
+                    <option value="15">15 mins (+ ₹20)</option>
+                    <option value="30">30 mins (+ ₹40)</option>
+                    <option value="60">1 hour (+ ₹80)</option>
+                    <option value="120">2 hours (+ ₹150)</option>
+                </select>
+            </div>
+
+            <button class="confirm-btn" id="payBtn" onclick="handlePayment()">
+                <i class="fas fa-credit-card"></i> Pay & Reserve
+            </button>
+
+            <div id="successBox" class="success-section">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">✅</div>
+                <h3 style="color: #3fb950;">Payment Success!</h3>
+                <p id="bookingDetails" style="color: #8b949e; margin: 10px 0;"></p>
+                <button class="confirm-btn" onclick="location.href='user-dashboard.html'">Return to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDigmGHwWyihxCZJP7KU5CijptuqwAtZqs",
+            authDomain: "smartpark-india-54312.firebaseapp.com",
+            projectId: "smartpark-india-54312",
+            storageBucket: "smartpark-india-54312.firebasestorage.app",
+            messagingSenderId: "58298050108",
+            appId: "1:58298050108:web:2775b30f48c8ce7dad0539",
+            measurementId: "G-PPH03PQE1D"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        const BASE_PRICE = 100;
+        const priceAddons = { "0": 0, "15": 20, "30": 40, "60": 80, "120": 150 };
+        
+        let currentUID = null;
+        let userName = "User";
+
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            document.getElementById('loc-display').textContent = params.get('name') || "Selected Spot";
+            
+            auth.onAuthStateChanged(async user => {
+                if (user) {
+                    currentUID = user.uid;
+                    // FETCH FIX: Get real name from users collection
+                    const doc = await db.collection("users").doc(user.uid).get();
+                    if (doc.exists) {
+                        // Support both field naming conventions (name or fullName)
+                        userName = doc.data().fullName || doc.data().name || "User";
+                    }
+                } else { window.location.href = "user-login.html"; }
+            });
+        };
+
+        function updatePrice() {
+            const extra = parseInt(document.getElementById('arriveTime').value);
+            document.getElementById('price-display').textContent = `₹${BASE_PRICE + priceAddons[extra]}`;
+        }
+
+        function resetToBase() {
+            document.getElementById('arriveTime').value = "0";
+            updatePrice();
+        }
+
+        document.getElementById('arriveTime').onchange = updatePrice;
+
+        async function handlePayment() {
+            const btn = document.getElementById('payBtn');
+            const arrivalMins = parseInt(document.getElementById('arriveTime').value);
+            const params = new URLSearchParams(window.location.search);
+            const locID = params.get('location');
+            const locName = params.get('name');
+
+            if (!locID) {
+                alert("Location Error. Please try again.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            const spotID = `${String.fromCharCode(65 + Math.floor(Math.random() * 26))}-${Math.floor(Math.random() * 99) + 1}`;
+            const finalPrice = BASE_PRICE + priceAddons[arrivalMins];
+            
+            // Expiry = Now + Arrival Selection + 1 Hour Base Parking
+            const expiryTime = Date.now() + (arrivalMins * 60000) + 3600000;
+
+            try {
+                const batch = db.batch();
+                const bRef = db.collection("bookings").doc();
+                
+                // DATA SYNC FIX: Ensure fields match Admin Dashboard requirements
+                batch.set(bRef, {
+                    userUID: currentUID,
+                    userName: userName, // Real name from Firebase Users
+                    locationID: locID,
+                    locationName: locName,
+                    spotNumber: spotID,
+                    price: Number(finalPrice), // Save as Number for math calculations
+                    status: 'ACTIVE',
+                    expiryTime: expiryTime,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // LIVE COUNT FIX: Increment the occupied spots in parking_spots
+                batch.update(db.collection("parking_spots").doc(locID), {
+                    occupied: firebase.firestore.FieldValue.increment(1)
+                });
+
+                await batch.commit();
+
+                document.getElementById('payBtn').style.display = 'none';
+                document.querySelector('.arrive-selector').style.display = 'none';
+                document.getElementById('successBox').style.display = 'block';
+                document.getElementById('bookingDetails').innerHTML = `Spot <b>${spotID}</b> reserved for ₹${finalPrice}.`;
+            } catch (e) {
+                console.error("Booking Error:", e);
+                alert("Booking failed. Error: " + e.message);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-credit-card"></i> Pay & Reserve';
+            }
+        }
+    </script>
+</body>
+</html>

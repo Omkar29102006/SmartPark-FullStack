@@ -1,0 +1,351 @@
+
+        :root {
+            --bg: #0b1020;
+            --surface: #111827;
+            --surface-soft: #1f2937;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --primary: #38bdf8;
+            --primary-strong: #0ea5e9;
+            --accent: #60a5fa;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #f87171;
+            --border: #334155;
+            --shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+            --radius: 14px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #0b1020 0%, #0f172a 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.45;
+        }
+
+        .admin-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 14px clamp(14px, 4vw, 34px);
+            background: #0f172a;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .header-left i {
+            display: inline-flex;
+            width: 42px;
+            height: 42px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            color: #0b1020;
+            background: #38bdf8;
+            box-shadow: none;
+        }
+
+        .header-left h1 {
+            font-size: clamp(1.2rem, 4.5vw, 1.65rem);
+            font-weight: 700;
+            color: #e5e7eb;
+        }
+
+        .admin-role-badge {
+            display: inline-block;
+            margin-top: 4px;
+            padding: 5px 11px;
+            border-radius: 999px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: #cbd5e1;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        #adminInfo {
+            font-weight: 600 !important;
+            color: #cbd5e1 !important;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #111827;
+            font-size: 0.86rem;
+        }
+
+        .logout-btn {
+            border: 1px solid #7f1d1d;
+            background: #1f2937;
+            color: var(--danger);
+            padding: 9px 14px;
+            border-radius: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover { background: #7f1d1d; color: #fee2e2; }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: clamp(16px, 4vw, 34px);
+        }
+
+        .role-info,
+        .stat-card,
+        .total-slots-section,
+        .city-filter,
+        .table-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: none;
+        }
+
+        .role-info {
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .last-updated { color: var(--muted); font-size: 0.82rem; margin-top: 8px; }
+
+        .revenue-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .tab-btn {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--muted);
+            padding: 9px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover { border-color: #bfcde0; }
+        .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        .total-slots-section {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .slot-stat {
+            background: var(--surface-soft);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .slot-stat-value { font-size: clamp(1.4rem, 4vw, 1.9rem); font-weight: 800; color: var(--primary-strong); }
+        .slot-stat-label { margin-top: 4px; color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: none;
+        }
+
+        .stat-icon { font-size: 2.1rem; margin-bottom: 8px; color: var(--accent); }
+        .stat-value { font-size: clamp(1.6rem, 5vw, 2.1rem); font-weight: 800; color: var(--text); }
+        .stat-label { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+
+        .controls-section {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .city-filter { padding: 18px; }
+
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        select, input {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            background: var(--surface-soft);
+            color: var(--text);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.94rem;
+            min-width: 160px;
+        }
+
+        .spot-control-btn,
+        .cancel-btn,
+        .action-btn {
+            border: none;
+            border-radius: 9px;
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 9px 12px;
+        }
+        .spot-control-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .btn-add { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .btn-remove { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .btn-reset { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+
+        .btn-add:hover { background: #bbf7d0; }
+        .btn-remove:hover { background: #fecaca; }
+        .btn-reset:hover { background: #bae6fd; }
+
+        .cancel-btn {
+            background: #fff;
+            color: var(--danger);
+            border: 1px solid #fecaca;
+        }
+
+        .cancel-btn:hover { background: #fee2e2; }
+
+        .table-section {
+            padding: 18px;
+            margin-bottom: 14px;
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .table-title {
+            font-size: clamp(1.02rem, 3.5vw, 1.22rem);
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 680px; }
+
+        th, td {
+            text-align: left;
+            padding: 11px 10px;
+            border-bottom: 1px solid #334155;
+            vertical-align: middle;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        td { font-size: 0.92rem; color: #f3f4f6; }
+
+        .status-badge,
+        .city-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            min-width: 86px;
+        }
+
+        .status-confirmed { background: #3f2f06; color: #facc15; }
+        .status-completed { background: #172554; color: #93c5fd; }
+        .status-active { background: #052e16; color: #86efac; }
+        .city-mumbai { background: #0c4a6e; color: #bae6fd; }
+
+        .end-btn { background: var(--warning); color: #fff; }
+        .end-btn:hover { background: #b45309; }
+        .end-btn:disabled { background: #94a3b8; color: #e2e8f0; cursor: not-allowed; }
+
+        .timer { color: #b45309; font-weight: 700; }
+        .completed-row { background: #1f2937 !important; opacity: 0.9; }
+
+        .toast {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 1000;
+            transform: translateX(420px);
+            transition: transform 0.25s ease;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: #ffe4e6;
+            background: var(--success);
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: none;
+        }
+
+        .toast.show { transform: translateX(0); }
+
+        :focus-visible {
+            outline: 3px solid #7dd3fc;
+            outline-offset: 2px;
+            border-radius: 7px;
+        }
+
+        @media (max-width: 900px) {
+            .controls-section { grid-template-columns: 1fr; }
+            .total-slots-section { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .admin-header { align-items: stretch; }
+            .header-right { justify-content: space-between; }
+            .stats-grid { grid-template-columns: 1fr; }
+            #adminInfo { max-width: 58vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            select, input { min-width: 100%; }
+            .filter-row { flex-direction: column; align-items: stretch; }
+            table { min-width: 560px; }
+        }
+    
